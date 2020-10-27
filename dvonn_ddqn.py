@@ -198,11 +198,11 @@ class Agent:
 
 
     def _getTargets(self, batch):
-        states, states_ = extract_states(batch)
+        states, states_ = self.extract_states(batch)
         if (states_.ndim < 3) or (states.ndim < 3):
             import ipdb; ipdb.set_trace()
         try:
-            p, p_, pTarget_ = getPredictions(states, states_)
+            p, p_, pTarget_ = self.getPredictions(states, states_)
         except Exception as e:
             print(e)
             import ipdb
@@ -213,7 +213,7 @@ class Agent:
         errors = numpy.zeros(len(batch))
 
         for i in range(len(batch)):
-            x[i], y[i], error[i] = getStateAndPrediction(batch, p)
+            x[i], y[i], error[i] = self.getStateAndPrediction(batch, p)
 
         return (x, y, errors)
 
