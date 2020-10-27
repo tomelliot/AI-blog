@@ -11,7 +11,7 @@
 
 import random, numpy, math, gym, scipy
 from . import SumTree
-from keras import backend as K
+from tensorflow.keras import backend as K
 import tensorflow as tf
 
 
@@ -45,9 +45,9 @@ def processImage( img ):
     return img
 
 #-------------------- BRAIN ---------------------------
-from keras.models import Sequential
-from keras.layers import *
-from keras.optimizers import *
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import *
+from tensorflow.keras.optimizers import *
 
 class Brain:
     def __init__(self, stateCnt, actionCnt):
