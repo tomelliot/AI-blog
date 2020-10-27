@@ -10,7 +10,7 @@
 # author: Jaromir Janisch, 2016
 
 import random, numpy, math, gym, scipy
-from SumTree import SumTree
+from . import SumTree
 from keras import backend as K
 import tensorflow as tf
 
@@ -92,7 +92,7 @@ class Memory:   # stored as ( s, a, r, s_ ) in SumTree
     a = 0.6
 
     def __init__(self, capacity):
-        self.tree = SumTree(capacity)
+        self.tree = SumTree.SumTree(capacity)
 
     def _getPriority(self, error):
         return (error + self.e) ** self.a
