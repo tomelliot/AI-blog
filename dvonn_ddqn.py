@@ -138,9 +138,10 @@ class Agent:
     steps = 0
     epsilon = MAX_EPSILON
 
-    def __init__(self, stateCnt, actionCnt):
+    def __init__(self, stateCnt, actionCnt, verbose=False):
         self.stateCnt = stateCnt
         self.actionCnt = actionCnt
+        self.verbose = verbose
 
         self.brain = Brain(stateCnt, actionCnt)
         # self.memory = Memory(MEMORY_CAPACITY)
@@ -179,26 +180,30 @@ class Agent:
             pTarget_ = self.brain.predict(states_, target=True)
             return p, p_, pTarget_
 
-    def getStateAndPrediction(self, batch, p):
-        o = batch[i][1]
+    def getStateAndPrediction(self, batch, p, pTarget_, p_):
+        o = batch[1]
         s = o[0]; a = o[1]; r = o[2]; s_ = o[3]
         s = s[..., numpy.newaxis]
 
-        t = p[i]
+        t = p
         oldVal = t[a]
         if s_ is None:
             t[a] = r
         else:
-            t[a] = r + GAMMA * pTarget_[i][ numpy.argmax(p_[i]) ]  # double DQN
+            t[a] = r + GAMMA * pTarget_[ numpy.argmax(p_) ]  # double DQN
 
         x = s
         y = t
         errors = abs(oldVal - t[a])
-        return x, y, error
+        return x, y, errors
 
 
     def _getTargets(self, batch):
         states, states_ = self.extract_states(batch)
+        if self.verbose:
+            print("states.shape:  {}".format(states.shape))
+            print("states_.shape:  {}".format(states_.shape))
+
         if (states_.ndim < 3) or (states.ndim < 3):
             import ipdb; ipdb.set_trace()
         try:
@@ -213,7 +218,7 @@ class Agent:
         errors = numpy.zeros(len(batch))
 
         for i in range(len(batch)):
-            x[i], y[i], error[i] = self.getStateAndPrediction(batch, p)
+            x[i], y[i], errors[i] = self.getStateAndPrediction(batch[i], p[i], pTarget_[i], p_[i])
 
         return (x, y, errors)
 
